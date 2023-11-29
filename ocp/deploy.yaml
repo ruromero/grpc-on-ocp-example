@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hello-grpc
+  name: hello-grpc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-grpc
+  template:
+    metadata:
+      labels:
+        app: hello-grpc
+    spec:
+      containers:
+      - image: quay.io/ruben/grpc-example:tls-latest
+        imagePullPolicy: Always
+        name: grpc-example
+        ports:
+        - name: grpc
+          containerPort: 9000
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-grpc
+  labels:
+    app: hello-grpc
+spec:
+  ports:
+  - name: grpc
+    port: 9000
+    protocol: TCP
+    targetPort: 9000
+  selector:
+    app: hello-grpc
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: hello-tls-grpc
+spec:
+  to:
+    kind: Service
+    name: hello-grpc
+  port:
+    targetPort: 9000
+  tls:
+    termination: passthrough
