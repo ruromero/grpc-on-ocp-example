@@ -1,0 +1,6 @@
+[allowlist]
+  description = "This is a test project"
+  paths = [
+    # Ignore self-generated certificate
+    '''\/src\/main\/resources\/tls\/.*\.pem$'''
+  ]
